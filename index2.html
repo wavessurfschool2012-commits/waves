@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Waves | Welcome</title>
     <style>
-        /* 1. SETUP FULL-SCREEN BACKGROUND (SHARP IMAGE) */
+        /* 1. SETUP FULL-SCREEN BACKGROUND */
         html, body {
             margin: 0;
             padding: 0;
@@ -14,7 +14,6 @@
             overflow: hidden;
             background-color: #000;
             
-            /* The base, sharp version of your collage */
             background-image: url('index2.1.jpg');
             background-size: cover;
             background-position: center;
@@ -33,64 +32,44 @@
             justify-content: center;
         }
 
-        /* 2. THE HAZY WINDOW (Blurred overlay) */
-        #hazy-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: inherit; /* Inherits sharp background image */
-            background-size: inherit;
-            background-position: inherit;
-            
-            /* The 50% Blur Effect */
-            filter: blur(8px) brightness(0.9); /* Adjust 8px to change softness */
-            
-            /* Prepare the masking logic (leaves only the text sharp) */
-            -webkit-mask-image: linear-gradient(black, black); /* Initial solid mask */
-            mask-image: linear-gradient(black, black);
-            
-            /* Transition for smooth animation of letters appearing */
-            transition: -webkit-mask-image 0.1s ease-out;
-        }
-
-        /* 3. THE BRANDED BOX (For layout, sits outside the hazy window) */
-        #text-layout-box {
-            position: relative;
-            z-index: 10;
+        /* 2. THE BLUR AREA (NO BORDERS) */
+        #blur-overlay {
             width: 85%;
-            min-height: 20vh;
-            margin-top: -5%; 
-            
-            /* Branded Blue Border */
-            border: 4px solid #0077be; 
-            border-radius: 15px;
-            
+            /* Positioned over your surfboard collage area */
+            padding: 25px;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            text-align: center;
+            
+            /* LIVE BLUR EFFECT */
+            /* This blurs the photo behind the text by 50% */
+            backdrop-filter: blur(8px) brightness(0.9);
+            -webkit-backdrop-filter: blur(8px) brightness(0.9);
+            
+            /* Make the blur area invisible until text starts typing */
+            background-color: rgba(255, 255, 255, 0.05); 
+            border-radius: 20px;
+            
+            /* Smoothly appear as typing starts */
+            opacity: 0;
+            transition: opacity 1s ease;
         }
 
-        /* 4. TYPEWRITER CONTENT (Will define the alpha mask) */
+        /* 3. TYPEWRITER TEXT */
         #typewriter-text {
             font-family: 'Helvetica Neue', Arial, sans-serif;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             line-height: 1.6;
-            color: #1a1a1a;
-            text-align: center;
-            font-weight: 500;
-            
-            /* Initial visibility—will be controlled by JS */
-            opacity: 1; 
+            color: #ffffff; /* White text looks best over a blurred photo */
+            font-weight: 600;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
         }
 
         .cursor {
             display: inline-block;
             width: 3px;
-            background-color: #0077be;
+            background-color: #ffffff;
             margin-left: 5px;
             vertical-align: middle;
             animation: blink 0.7s infinite;
@@ -102,9 +81,7 @@
 <body>
 
     <div class="container">
-        <div id="hazy-overlay"></div>
-
-        <div id="text-layout-box">
+        <div id="blur-overlay">
             <div>
                 <span id="typewriter-text"></span><span class="cursor"></span>
             </div>
@@ -115,29 +92,24 @@
         const welcomeMsg = "Welcome to Waves. Whether you're here to conquer the Arabian Sea or just to enjoy the best sunset in Mangalore with a coffee, you're exactly where you need to be. After 7 years on the sand, we’ve mastered the art of the perfect wave and the perfect meal.";
 
         const textElement = document.getElementById('typewriter-text');
-        const overlayElement = document.getElementById('hazy-overlay');
+        const overlayElement = document.getElementById('blur-overlay');
         
         let charIndex = 0;
-        const totalDuration = 10000; // 10 seconds
-        const typingSpeed = totalDuration / welcomeMsg.length; 
+        const totalDuration = 10000; // 10 Seconds
+        const typingSpeed = totalDuration / welcomeMsg.length;
 
         function playWelcome() {
+            // Show the blur overlay as soon as typing begins
+            if (charIndex === 0) {
+                overlayElement.style.opacity = "1";
+            }
+
             if (charIndex < welcomeMsg.length) {
-                // Add the letter
-                const currentChar = welcomeMsg.charAt(charIndex);
-                textElement.innerHTML += currentChar;
-
-                // UPDATE THE MASK: Dynamic CSS linear gradient 
-                // As letters add, the 'white' part of the gradient expands
-                const visiblePercentage = (charIndex / welcomeMsg.length) * 100;
-                overlayElement.style.webkitMaskImage = `linear-gradient(white ${visiblePercentage}%, transparent ${visiblePercentage + 2}%)`;
-                overlayElement.style.maskImage = `linear-gradient(white ${visiblePercentage}%, transparent ${visiblePercentage + 2}%)`;
-
+                textElement.innerHTML += welcomeMsg.charAt(charIndex);
                 charIndex++;
                 setTimeout(playWelcome, typingSpeed);
             } else {
-                console.log("Welcome complete. Transitioning to legacy presentation...");
-                // Phase 2 transition logic will go here
+                console.log("Intro complete. Awaiting Phase 2 details.");
             }
         }
 
