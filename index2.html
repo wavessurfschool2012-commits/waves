@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Waves | Story</title>
+    <title>Waves | The Story Begins</title>
     <style>
-        /* 1. DISABLE ALL INTERACTION */
+        /* DISABLE ALL INTERACTION & SCROLLING */
         html, body {
             margin: 0;
             padding: 0;
             height: 100%;
+            width: 100%;
             overflow: hidden;
             background-color: #ffffff;
-            pointer-events: none; /* User cannot click or touch anything */
-            user-select: none;    /* User cannot select text */
+            pointer-events: none; /* Block all clicks/touches */
+            user-select: none;
         }
 
         .container {
@@ -22,9 +23,9 @@
             height: 100vh;
         }
 
-        /* 2. UPPER PART (Images) */
+        /* UPPER HALF (50%): The Images welcome1 to welcome9 */
         #upper-deck {
-            flex: 1; /* Takes 50% of the screen */
+            flex: 1;
             background-color: #000;
             display: flex;
             align-items: center;
@@ -38,28 +39,29 @@
             object-fit: cover;
         }
 
-        /* 3. LOWER PART (Typewriter) */
+        /* LOWER HALF (50%): The Welcome Message */
         #lower-deck {
-            flex: 1; /* Takes 50% of the screen */
-            background-color: #f9f9f9;
+            flex: 1;
+            background-color: #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 30px;
-            border-top: 2px solid #eee;
+            text-align: center;
+            border-top: 1px solid #ddd;
         }
 
         #typewriter-text {
-            font-family: 'Georgia', serif; /* A classic, professional look */
-            font-size: 1.2rem;
+            font-family: 'Georgia', serif;
+            font-size: 1.25rem;
             line-height: 1.6;
-            color: #333;
-            text-align: center;
-            max-width: 600px;
+            color: #1a1a1a;
+            max-width: 800px;
         }
 
         .cursor {
-            border-right: 2px solid #0077be;
+            border-right: 3px solid #0077be;
+            margin-left: 5px;
             animation: blink 0.7s infinite;
         }
 
@@ -70,26 +72,25 @@
 
     <div class="container">
         <div id="upper-deck">
-            <img id="intro-image" src="msg1.img" alt="Waves Intro">
+            <img id="intro-image" src="welcome1.jpg" alt="Waves Montage">
         </div>
 
         <div id="lower-deck">
-            <div id="typewriter-text"></div>
+            <div>
+                <span id="typewriter-text"></span><span class="cursor"></span>
+            </div>
         </div>
     </div>
 
     <script>
-        // CONFIGURATION
-        const introImages = [
-            "msg1.img", "msg2.img", "msg3.img", "msg4.img", 
-            "msg5.img", "msg6.img", "msg7.img", "msg8.img", "msg9.img"
+        // IMAGE CONFIGURATION
+        const welcomeImages = [
+            "welcome1.jpg", "welcome2.jpg", "welcome3.jpg", 
+            "welcome4.jpg", "welcome5.jpg", "welcome6.jpg", 
+            "welcome7.jpg", "welcome8.jpg", "welcome9.jpg"
         ];
 
         const welcomeMsg = "Welcome to Waves. Whether you're here to conquer the Arabian Sea or just to enjoy the best sunset in Mangalore with a coffee, you're exactly where you need to be. After 7 years on the sand, we’ve mastered the art of the perfect wave and the perfect meal.";
-
-        const totalIntroTime = 10000; // 10 seconds
-        const imageInterval = totalIntroTime / introImages.length; // ~1.1 seconds per image
-        const typingSpeed = totalIntroTime / welcomeMsg.length; // Syncs typing to finish at 10s
 
         let imgIndex = 0;
         let charIndex = 0;
@@ -97,32 +98,34 @@
         const imgElement = document.getElementById('intro-image');
         const textElement = document.getElementById('typewriter-text');
 
-        // Logic for Flashing Images
-        function playIntroImages() {
-            if (imgIndex < introImages.length) {
-                imgElement.src = introImages[imgIndex];
+        // 1. IMAGE LOGIC: 9 images in 10 seconds (~1.1s per image)
+        function playImages() {
+            if (imgIndex < welcomeImages.length) {
+                imgElement.src = welcomeImages[imgIndex];
                 imgIndex++;
-                setTimeout(playIntroImages, imageInterval);
+                setTimeout(playImages, 1111); // 10,000ms divided by 9 images
             }
         }
 
-        // Logic for Typing Text
-        function playWelcomeText() {
+        // 2. TEXT LOGIC: Typing speed calculated to finish around 9 seconds
+        function playText() {
             if (charIndex < welcomeMsg.length) {
                 textElement.innerHTML += welcomeMsg.charAt(charIndex);
                 charIndex++;
-                setTimeout(playWelcomeText, typingSpeed);
+                setTimeout(playText, 32); // Calibrated speed for 10s window
             } else {
-                // Intro is finished! 
-                console.log("10 Second Intro Complete. Transitioning to Image 1...");
-                // Here we will eventually add the code to trigger index2-presentation
+                // End of 10-second phase
+                setTimeout(() => {
+                    console.log("Phase 1 Complete. Ready for Image 1 Presentation...");
+                    // We will add the transition to your 7-year presentation here
+                }, 1000);
             }
         }
 
-        // Start everything when page loads
+        // Start both simultaneously
         window.onload = () => {
-            playIntroImages();
-            playWelcomeText();
+            playImages();
+            playText();
         };
     </script>
 </body>
