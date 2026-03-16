@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Waves | Welcome</title>
     <style>
-        /* 1. SETUP FULL-SCREEN BACKGROUND */
+        /* 1. SETUP FULL-SCREEN BACKGROUND (SHARP IMAGE) */
         html, body {
             margin: 0;
             padding: 0;
@@ -14,7 +14,7 @@
             overflow: hidden;
             background-color: #000;
             
-            /* Background Configuration */
+            /* The base, sharp version of your collage */
             background-image: url('index2.1.jpg');
             background-size: cover;
             background-position: center;
@@ -33,15 +33,38 @@
             justify-content: center;
         }
 
-        /* 2. THE TEXT BOX (Over your blue marked area) */
-        #text-box {
+        /* 2. THE HAZY WINDOW (Blurred overlay) */
+        #hazy-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: inherit; /* Inherits sharp background image */
+            background-size: inherit;
+            background-position: inherit;
+            
+            /* The 50% Blur Effect */
+            filter: blur(8px) brightness(0.9); /* Adjust 8px to change softness */
+            
+            /* Prepare the masking logic (leaves only the text sharp) */
+            -webkit-mask-image: linear-gradient(black, black); /* Initial solid mask */
+            mask-image: linear-gradient(black, black);
+            
+            /* Transition for smooth animation of letters appearing */
+            transition: -webkit-mask-image 0.1s ease-out;
+        }
+
+        /* 3. THE BRANDED BOX (For layout, sits outside the hazy window) */
+        #text-layout-box {
+            position: relative;
+            z-index: 10;
             width: 85%;
             min-height: 20vh;
-            /* Positioned to align with the middle section of your collage */
             margin-top: -5%; 
             
-            background-color: rgba(255, 255, 255, 0.85); /* Semi-transparent */
-            border: 3px solid #0077be; /* Branded Blue */
+            /* Branded Blue Border */
+            border: 4px solid #0077be; 
             border-radius: 15px;
             
             display: flex;
@@ -49,12 +72,9 @@
             justify-content: center;
             padding: 20px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-            
-            /* This handles the blur effect for the box content */
-            transition: filter 0.2s ease;
         }
 
-        /* 3. TYPEWRITER & BLUR ANIMATION */
+        /* 4. TYPEWRITER CONTENT (Will define the alpha mask) */
         #typewriter-text {
             font-family: 'Helvetica Neue', Arial, sans-serif;
             font-size: 1.1rem;
@@ -62,12 +82,9 @@
             color: #1a1a1a;
             text-align: center;
             font-weight: 500;
-        }
-
-        /* The blur effect triggered when a letter enters */
-        .blur-active {
-            filter: blur(4px);
-            opacity: 0.7;
+            
+            /* Initial visibility—will be controlled by JS */
+            opacity: 1; 
         }
 
         .cursor {
@@ -85,7 +102,9 @@
 <body>
 
     <div class="container">
-        <div id="text-box">
+        <div id="hazy-overlay"></div>
+
+        <div id="text-layout-box">
             <div>
                 <span id="typewriter-text"></span><span class="cursor"></span>
             </div>
@@ -96,30 +115,29 @@
         const welcomeMsg = "Welcome to Waves. Whether you're here to conquer the Arabian Sea or just to enjoy the best sunset in Mangalore with a coffee, you're exactly where you need to be. After 7 years on the sand, we’ve mastered the art of the perfect wave and the perfect meal.";
 
         const textElement = document.getElementById('typewriter-text');
-        const boxElement = document.getElementById('text-box');
+        const overlayElement = document.getElementById('hazy-overlay');
         
         let charIndex = 0;
-        const totalDuration = 10000; // 10 Seconds
-        const typingSpeed = totalDuration / welcomeMsg.length;
+        const totalDuration = 10000; // 10 seconds
+        const typingSpeed = totalDuration / welcomeMsg.length; 
 
         function playWelcome() {
             if (charIndex < welcomeMsg.length) {
-                // Apply Blur Effect
-                boxElement.classList.add('blur-active');
-                
                 // Add the letter
-                textElement.innerHTML += welcomeMsg.charAt(charIndex);
-                
-                // Remove Blur after a tiny delay to create the "flash" effect
-                setTimeout(() => {
-                    boxElement.classList.remove('blur-active');
-                }, 50);
+                const currentChar = welcomeMsg.charAt(charIndex);
+                textElement.innerHTML += currentChar;
+
+                // UPDATE THE MASK: Dynamic CSS linear gradient 
+                // As letters add, the 'white' part of the gradient expands
+                const visiblePercentage = (charIndex / welcomeMsg.length) * 100;
+                overlayElement.style.webkitMaskImage = `linear-gradient(white ${visiblePercentage}%, transparent ${visiblePercentage + 2}%)`;
+                overlayElement.style.maskImage = `linear-gradient(white ${visiblePercentage}%, transparent ${visiblePercentage + 2}%)`;
 
                 charIndex++;
                 setTimeout(playWelcome, typingSpeed);
             } else {
-                console.log("Welcome complete. Waiting for Phase 2 details...");
-                // Next phase logic will be added here
+                console.log("Welcome complete. Transitioning to legacy presentation...");
+                // Phase 2 transition logic will go here
             }
         }
 
