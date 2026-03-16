@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Waves | Story</title>
+    <style>
+        /* 1. DISABLE ALL INTERACTION */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background-color: #ffffff;
+            pointer-events: none; /* User cannot click or touch anything */
+            user-select: none;    /* User cannot select text */
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* 2. UPPER PART (Images) */
+        #upper-deck {
+            flex: 1; /* Takes 50% of the screen */
+            background-color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        #intro-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 3. LOWER PART (Typewriter) */
+        #lower-deck {
+            flex: 1; /* Takes 50% of the screen */
+            background-color: #f9f9f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            border-top: 2px solid #eee;
+        }
+
+        #typewriter-text {
+            font-family: 'Georgia', serif; /* A classic, professional look */
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #333;
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .cursor {
+            border-right: 2px solid #0077be;
+            animation: blink 0.7s infinite;
+        }
+
+        @keyframes blink { 50% { opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="upper-deck">
+            <img id="intro-image" src="msg1.img" alt="Waves Intro">
+        </div>
+
+        <div id="lower-deck">
+            <div id="typewriter-text"></div>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURATION
+        const introImages = [
+            "msg1.img", "msg2.img", "msg3.img", "msg4.img", 
+            "msg5.img", "msg6.img", "msg7.img", "msg8.img", "msg9.img"
+        ];
+
+        const welcomeMsg = "Welcome to Waves. Whether you're here to conquer the Arabian Sea or just to enjoy the best sunset in Mangalore with a coffee, you're exactly where you need to be. After 7 years on the sand, we’ve mastered the art of the perfect wave and the perfect meal.";
+
+        const totalIntroTime = 10000; // 10 seconds
+        const imageInterval = totalIntroTime / introImages.length; // ~1.1 seconds per image
+        const typingSpeed = totalIntroTime / welcomeMsg.length; // Syncs typing to finish at 10s
+
+        let imgIndex = 0;
+        let charIndex = 0;
+
+        const imgElement = document.getElementById('intro-image');
+        const textElement = document.getElementById('typewriter-text');
+
+        // Logic for Flashing Images
+        function playIntroImages() {
+            if (imgIndex < introImages.length) {
+                imgElement.src = introImages[imgIndex];
+                imgIndex++;
+                setTimeout(playIntroImages, imageInterval);
+            }
+        }
+
+        // Logic for Typing Text
+        function playWelcomeText() {
+            if (charIndex < welcomeMsg.length) {
+                textElement.innerHTML += welcomeMsg.charAt(charIndex);
+                charIndex++;
+                setTimeout(playWelcomeText, typingSpeed);
+            } else {
+                // Intro is finished! 
+                console.log("10 Second Intro Complete. Transitioning to Image 1...");
+                // Here we will eventually add the code to trigger index2-presentation
+            }
+        }
+
+        // Start everything when page loads
+        window.onload = () => {
+            playIntroImages();
+            playWelcomeText();
+        };
+    </script>
+</body>
+</html>
